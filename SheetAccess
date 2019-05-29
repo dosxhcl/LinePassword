@@ -1,0 +1,56 @@
+/**
+ *  Function to create a spreadsheet for password
+ *  when there is no sheet exist
+ *  
+ *  @param  None
+ *
+ *  @retvl  Id of the created sheet
+ */
+function createPassbook()
+{
+  var newPasswordBook = SpreadsheetApp.create("LinePassword");
+  Logger.log(newPasswordBook.getId());
+  
+  // Prepare the spaces for the password book
+  var passSheet = newPasswordBook.getActiveSheet();
+  passSheet.setName("PassBook");
+  passSheet.setColumnWidth(1, 150); // Name
+  passSheet.setColumnWidth(2, 4);   // Colume Seperator
+  passSheet.setColumnWidth(3, 150); // ID
+  passSheet.setColumnWidth(4, 150); // Account
+  passSheet.setColumnWidth(5, 300); // Password
+  passSheet.setRowHeight(2,4);      // Row Seperator
+  passSheet.getRange("A2:Z2").setBorder(true, true, true, true, false, false);
+  passSheet.getRange("B1:B200").setBorder(false, true, false, true, false, false);
+
+  // Prepare the titles
+  var titleValue = ['ID', 'Account', 'Password'];
+  var titleRange = passSheet.getRange('C1:E1');
+  //titleRange.setBorder(false, true, true, true, false, false);
+  titleRange.setValues([titleValue]);
+  titleRange.setFontSize(12);
+  
+  return newPasswordBook.getId();
+}
+
+/**
+ *  Function to get the spreadsheet from the drive
+ *  
+ *  @param  None
+ *
+ *  @retvl  Id of the sheet
+ */
+function getPassSheetId()
+{
+  var sheetId = 0;
+  var files = DriveApp.getFilesByName('LinePassword');
+  while(files.hasNext()) 
+  {
+    var file = files.next();
+    sheetId = file.getId();
+  }
+  if(sheetId == 0)
+    return createPassbook();
+  else
+    return sheetId;
+}
