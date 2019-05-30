@@ -8,7 +8,7 @@
  */
 function createPassbook()
 {
-  var newPasswordBook = SpreadsheetApp.create("LinePassword");
+  var newPasswordBook = SpreadsheetApp.create("TempLinePassword");
   Logger.log(newPasswordBook.getId());
   
   // Prepare the spaces for the password book
@@ -18,7 +18,7 @@ function createPassbook()
   passSheet.setColumnWidth(2, 4);   // Colume Seperator
   passSheet.setColumnWidth(3, 150); // ID
   passSheet.setColumnWidth(4, 150); // Account
-  passSheet.setColumnWidth(5, 300); // Password
+  passSheet.setColumnWidth(5, 400); // Password
   passSheet.setRowHeight(2,4);      // Row Seperator
   passSheet.getRange("A2:Z2").setBorder(true, true, true, true, false, false);
   passSheet.getRange("B1:B200").setBorder(false, true, false, true, false, false);
@@ -26,7 +26,6 @@ function createPassbook()
   // Prepare the titles
   var titleValue = ['ID', 'Account', 'Password'];
   var titleRange = passSheet.getRange('C1:E1');
-  //titleRange.setBorder(false, true, true, true, false, false);
   titleRange.setValues([titleValue]);
   titleRange.setFontSize(12);
   
@@ -43,7 +42,7 @@ function createPassbook()
 function getPassSheetId()
 {
   var sheetId = 0;
-  var files = DriveApp.getFilesByName('LinePassword');
+  var files = DriveApp.getFilesByName('TempLinePassword');
   while(files.hasNext()) 
   {
     var file = files.next();
@@ -53,4 +52,46 @@ function getPassSheetId()
     return createPassbook();
   else
     return sheetId;
+}
+
+/**
+ *  Function to get all the accounts from the passbook
+ *  
+ *  @param  None
+ *
+ *  @retvl  Array of all the accounts
+ */
+function loadAccounts(passwordSheet)
+{
+  var accountsInfo = passwordSheet.getRange("A3:E70").getValues();
+  
+  for(var i=0; i<accountsInfo.length; i++)
+  {
+    if(accountsInfo[i][0] == '')
+      accountsInfo.splice(i, accountsInfo.length-i);
+  }
+  return accountsInfo;
+}
+
+/**
+ *  Function to write a new account and password to the passbook
+ *  
+ *  @param  None
+ *
+ *  @retvl  None
+ */
+function recordAccount(passwordSheet, accountsInfo, newAccount)
+{
+  const startPosition = 3
+  
+  // Prepare to encrypt the password
+  var cipher = new cCryptoGS.Cipher('this is my passphrase', 'aes');
+  var encryptedPassword = cipher.encrypt(newAccount[3]);
+  
+  var writeRange = passwordSheet.getRange(startPosition+accountsInfo.length,1,1,5);
+  writeRange.setValues([[newAccount[0], "", newAccount[1], newAccount[2], encryptedPassword]]);
+  
+  // Set the Font Colour to white
+  writeRange = passwordSheet.getRange(startPosition+accountsInfo.length,5,1,1);
+  writeRange.setFontColor("white");
 }
