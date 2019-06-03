@@ -1,0 +1,32 @@
+/**
+ *  Function get the password
+ *  
+ *  @param  None
+ *
+ *  @retvl  the actual password
+ */
+function getPasswordInfo(accountsInfo, index)
+{
+  var cipher = new cCryptoGS.Cipher('this is my passphrase', 'aes');
+  var decryptedPassword = cipher.decrypt(accountsInfo[index][4]);
+  var passwordInfo = [accountsInfo[index][0], accountsInfo[index][2], accountsInfo[index][3], decryptedPassword];
+  
+  return passwordInfo;
+}
+
+/**
+ *  Function to check if the given name already exist
+ *  
+ *  @param  None
+ *
+ *  @retvl  the index value of the exist account
+ */
+function checkExistence(accountsInfo, accountName)
+{
+  for(var i=0; i<accountsInfo.length; i++)
+  {
+    if(accountsInfo[i][0].toLowerCase() == accountName.toLowerCase())
+      return i;
+  }
+  return accountsInfo.length+1;
+}
