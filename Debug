@@ -1,6 +1,6 @@
 function DEBUG(log)
 {
-  var debugSheet = SpreadsheetApp.openById('1_2eOOaZYuwHMlRP_akbfK3Lp3_xu3wZK7ZZzSv27CvY').getActiveSheet();
+  var debugSheet = SpreadsheetApp.openById('/*Debug spreadsheet id*/').getActiveSheet();
   var startPosition = 1;
   var debugRange = debugSheet.getRange(startPosition,1,1,1);
   while(debugRange.getValue()!="")
